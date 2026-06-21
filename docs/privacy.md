@@ -1,8 +1,8 @@
 # Privacy Notes
 
-Blitztext macOS Preview does not include a hosted backend.
+Blitztext does not include a hosted backend.
 
-When you use the online workflows, your Mac sends data directly to OpenAI:
+When you use the online workflows, your Mac or iPhone sends data directly to OpenAI:
 
 - audio recordings for transcription
 - transcribed or typed text for rewriting
@@ -14,7 +14,7 @@ You are responsible for your OpenAI account, API usage, costs, and data handling
 
 ## Local Data
 
-The app stores:
+The macOS app stores:
 
 - your OpenAI API key in the user's macOS Keychain
 - workflow settings in local app support storage
@@ -26,6 +26,15 @@ Workflow output may also be placed on your clipboard so it can be pasted into an
 The app uses the system TLS trust store for OpenAI and Hugging Face requests. It does not currently pin certificates. A user-installed or managed root certificate can therefore affect HTTPS trust decisions on that Mac.
 
 Settings such as custom prompts, custom terms, and context are stored in local app support storage as plain JSON. Do not put secrets into those fields.
+
+The iOS app stores:
+
+- your OpenAI API key in the iOS Keychain
+- the latest pending keyboard transcript in the shared keychain so the keyboard extension can insert it
+- language, mode, and custom terms in local user defaults or shared keychain state
+- temporary audio files while a transcription is being processed; the app attempts to delete each recording after processing
+
+The iOS keyboard intentionally reads prepared transcript text from the shared keychain rather than reading the clipboard, to avoid repeated iOS paste permission prompts.
 
 ## Offline Scope
 

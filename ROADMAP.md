@@ -5,11 +5,11 @@ This is a preview roadmap, not a promise.
 ## Current Scope
 
 - macOS menubar app
+- experimental iOS app and custom keyboard extension
 - local recording and hotkeys
 - direct OpenAI API calls with a user-provided API key
 - transcription, rewriting, calmer-message, and emoji workflows
 - no hosted backend
-- no other platforms
 - no packaged public release
 
 ## Next Useful Work
@@ -22,6 +22,7 @@ This is a preview roadmap, not a promise.
 - Reduce the Accessibility blast radius, ideally by moving synthetic paste into a smaller helper with narrower responsibilities.
 - Add stronger supply-chain checks around downloaded local speech models.
 - Add signed and notarized release builds when the project is ready for non-developer users.
+- Improve the iOS return flow if Apple exposes a more reliable public API or if a robust background-session architecture is added.
 
 ## Not In Scope Yet
 

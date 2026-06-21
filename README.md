@@ -1,9 +1,10 @@
 # Blitztext App
 
-> 📱 **iOS variant:** there is now an experimental iPhone version — dictate into any app
-> via a custom keyboard. See [README-iOS.md](README-iOS.md).
+> 📱 **Fork status:** this fork contains the original experimental macOS menubar app
+> plus an iPhone/iPad-oriented iOS app with a custom Blitztext keyboard. See
+> [README-iOS.md](README-iOS.md).
 
-Blitztext App is an experimental open-source macOS menubar app for turning speech into text.
+Blitztext App is an experimental open-source Swift app for turning speech into text.
 
 It is intentionally small and unfinished. The goal is to make a real workflow visible and hackable: press a hotkey, speak, get text back, optionally rewrite it, and paste it into the app you were using.
 
@@ -13,14 +14,23 @@ This is a learning and experimentation project, not a polished product.
 
 ## What It Does
 
+### macOS
+
 - **Blitztext**: record speech and transcribe it.
 - **Blitztext+**: record speech, transcribe it, then turn the rough draft into cleaner writing.
 - **Blitztext $%&!**: turn frustrated speech into a calmer message.
 - **Blitztext :)**: add fitting emojis to dictated text.
 
+### iOS
+
+- **Blitztext keyboard**: start dictation from any text field through a custom keyboard.
+- **Blitztext iOS app**: records with the microphone, transcribes with OpenAI Whisper, and hands the result back to the keyboard.
+- **Two modes**: use literal transcription or an improved mode that cleans up and shortens the text while preserving meaning.
+- **No clipboard read**: the iOS keyboard receives prepared text through the shared keychain to avoid recurring iOS paste prompts.
+
 ## Important Preview Notes
 
-- macOS only.
+- macOS and experimental iOS targets are included.
 - Bring your own OpenAI API key.
 - No hosted Blitztext backend is included or provided.
 - In online mode, audio and text are sent directly from the app to the OpenAI API.
@@ -48,6 +58,8 @@ The intent is not to ship a one-click finished app. The intent is to make a real
 
 ## Requirements
 
+### macOS
+
 - macOS 14 or newer
 - Xcode 16 or newer (Swift 5.10), with Command Line Tools installed and selected for `xcodebuild`
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen) to generate the Xcode project
@@ -61,6 +73,13 @@ The build also pulls one Swift Package dependency automatically:
 
 - [`argmax-oss-swift`](https://github.com/argmaxinc/argmax-oss-swift) (WhisperKit) — used for local on-device transcription.
 
+### iOS
+
+- A real iPhone or iPad for device testing.
+- Xcode with a development team configured for local signing.
+- Full Access enabled for the Blitztext keyboard in iOS Settings.
+- An OpenAI API key for transcription and rewriting.
+
 Install XcodeGen if needed:
 
 ```bash
@@ -70,7 +89,7 @@ brew install xcodegen
 ## Build And Run
 
 ```bash
-git clone https://github.com/cmagnussen/blitztext-app.git
+git clone https://github.com/weisserjc/blitztext-app.git
 cd blitztext-app
 ./build.sh --run
 ```
@@ -88,6 +107,9 @@ On first launch, either paste your own OpenAI API key for online workflows or in
 For fully local transcription, install a WhisperKit CoreML model and enable **Sicherer Lokaler Modus** in the app.
 
 For a slower, more explicit walkthrough, see [docs/setup.md](docs/setup.md).
+
+For iOS build and install notes, see [README-iOS.md](README-iOS.md) and
+[docs/ios-keyboard-mvp.md](docs/ios-keyboard-mvp.md).
 
 ## Permissions
 
@@ -120,6 +142,13 @@ BlitztextMac/
   Features/     Workflows, menu bar UI, settings
   Services/     Recording, OpenAI calls, hotkeys, local storage
   Views/        Shared SwiftUI views
+BlitztextiOS/
+  App/          iOS container app, recording screen, settings
+BlitztextKeyboard/
+  Resources/    iOS keyboard extension metadata
+  *.swift       Custom keyboard UI and text insertion
+BlitztextShared/
+  *.swift       Shared OpenAI, audio, keychain, and state helpers
 build.sh        Local build script
 docs/           Setup, privacy, roadmap, preflight, landing page notes
 ```

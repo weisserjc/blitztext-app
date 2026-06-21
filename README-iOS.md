@@ -1,7 +1,7 @@
 # Blitztext for iOS
 
-Blitztext for iOS is an experimental open-source iPhone variant of
-[Blitztext](https://github.com/cmagnussen/blitztext-app) for turning speech into text —
+Blitztext for iOS is an experimental open-source iOS variant of
+[Blitztext](https://github.com/weisserjc/blitztext-app) for turning speech into text —
 not in one app, but in **any** app, through a custom keyboard.
 
 Like the original, it is intentionally small and hackable. The goal is to make a real
@@ -46,7 +46,7 @@ the clipboard: the keyboard never reads the pasteboard, which avoids the recurri
 
 ## Important Preview Notes
 
-- iPhone only; a **real device** is required (the keyboard-microphone limitation does not
+- iPhone-first; a **real device** is required (the keyboard-microphone limitation does not
   reproduce in the Simulator).
 - **Full Access** must be enabled for the Blitztext keyboard (needed for the keychain
   and for opening the app).
@@ -63,7 +63,8 @@ commands. In short: `xcodegen generate`, build the `BlitztextiOS` scheme to a co
 device with your own signing team, install with `xcrun devicectl`.
 
 Note: the bundle identifiers (`de.johannesweisser.blitztext.ios*`) and signing team in
-`project.yml` are personal placeholders — replace them with your own.
+`project.yml` belong to the maintainer's local development setup. Replace them with your
+own identifiers and Apple development team when building your own fork.
 
 ## Relationship to the original
 
