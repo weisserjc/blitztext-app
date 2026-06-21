@@ -70,7 +70,8 @@ targets:
           - BlitztextiOS.entitlements
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.blitztext.ios
+        DEVELOPMENT_TEAM: 43AUMU7SS5
+        PRODUCT_BUNDLE_IDENTIFIER: de.johannesweisser.blitztext.ios
         PRODUCT_NAME: Blitztext
         INFOPLIST_FILE: ../BlitztextiOS/Resources/Info.plist
         INFOPLIST_KEY_CFBundleShortVersionString: $(MARKETING_VERSION)
@@ -80,11 +81,6 @@ targets:
     dependencies:
       - target: BlitztextKeyboard
         embed: true
-    entitlements:
-      path: ../BlitztextiOS/Resources/BlitztextiOS.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.app.blitztext.shared
 
   BlitztextKeyboard:
     type: app-extension
@@ -97,14 +93,10 @@ targets:
       - path: ../BlitztextShared
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: app.blitztext.ios.keyboard
+        DEVELOPMENT_TEAM: 43AUMU7SS5
+        PRODUCT_BUNDLE_IDENTIFIER: de.johannesweisser.blitztext.ios.keyboard
         PRODUCT_NAME: BlitztextKeyboard
         INFOPLIST_FILE: ../BlitztextKeyboard/Resources/Info.plist
         INFOPLIST_KEY_CFBundleShortVersionString: $(MARKETING_VERSION)
         INFOPLIST_KEY_CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         CODE_SIGN_ENTITLEMENTS: ../BlitztextKeyboard/Resources/BlitztextKeyboard.entitlements
-    entitlements:
-      path: ../BlitztextKeyboard/Resources/BlitztextKeyboard.entitlements
-      properties:
-        com.apple.security.application-groups:
-          - group.app.blitztext.shared

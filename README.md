@@ -1,5 +1,8 @@
 # Blitztext App
 
+> 📱 **iOS variant:** there is now an experimental iPhone version — dictate into any app
+> via a custom keyboard. See [README-iOS.md](README-iOS.md).
+
 Blitztext App is an experimental open-source macOS menubar app for turning speech into text.
 
 It is intentionally small and unfinished. The goal is to make a real workflow visible and hackable: press a hotkey, speak, get text back, optionally rewrite it, and paste it into the app you were using.

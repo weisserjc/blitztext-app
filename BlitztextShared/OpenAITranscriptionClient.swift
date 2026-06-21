@@ -54,7 +54,7 @@ enum OpenAITranscriptionClient {
 
         let audioData = try Data(contentsOf: audioURL, options: [.mappedIfSafe])
         var body = Data()
-        body.appendMultipartField(boundary: boundary, name: "file", filename: "audio.m4a", contentType: "audio/m4a", data: audioData)
+        body.appendMultipartField(boundary: boundary, name: "file", filename: "audio.wav", contentType: "audio/wav", data: audioData)
         body.appendMultipartField(boundary: boundary, name: "model", value: model)
         body.appendMultipartField(boundary: boundary, name: "response_format", value: "text")
 

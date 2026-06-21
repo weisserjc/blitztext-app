@@ -1,34 +1,63 @@
-# Blitztext iOS Keyboard MVP
+# Blitztext iOS (Keyboard + App)
 
-This branch adds an iOS container app and a custom keyboard extension.
+Eine iOS-Variante von Blitztext: Whisper-Diktat aus jeder App heraus über eine eigene
+Tastatur. Besteht aus der Container-App (`BlitztextiOS`) und der Tastatur-Extension
+(`BlitztextKeyboard`); gemeinsamer Code liegt in `BlitztextShared`.
 
-## Current flow
+## Ablauf
 
-1. The user enables the Blitztext keyboard in iOS Settings.
-2. In any editable text field, the user switches to the Blitztext keyboard.
-3. The keyboard's `Diktieren` button opens `blitztext://record?source=keyboard`.
-4. The iOS app records audio, sends it to OpenAI Whisper, and stores the transcript in the shared App Group.
-5. The transcript is also marked for auto-insert.
-6. When the Blitztext keyboard appears again, it consumes the pending transcript and inserts it through `textDocumentProxy.insertText(...)`.
+1. Nutzer aktiviert die Blitztext-Tastatur in iOS-Einstellungen und erlaubt „Vollzugriff".
+2. In einem Textfeld auf die Blitztext-Tastatur wechseln und auf **Diktieren** tippen.
+3. Die Tastatur öffnet die Blitztext-App (`blitztext://record?source=keyboard`).
+4. Die App nimmt **sofort** auf, transkribiert über OpenAI Whisper und legt den Text im
+   geteilten Schlüsselbund bereit.
+5. Der Nutzer tippt oben links auf den iOS-„‹ Zurück"-Chip und ist wieder in der Ziel-App.
+6. Die Tastatur erkennt den bereitliegenden Text und fügt ihn über `textDocumentProxy` ein.
 
-## Why recording is in the app
+## Warum die Aufnahme in der App läuft
 
-Apple's custom keyboard documentation says custom keyboards do not have microphone access, so dictation cannot run directly inside the keyboard extension. The keyboard therefore acts as the text insertion surface, while the containing app owns microphone capture and transcription.
+Getestet auf iPhone (iOS 26): Eine Keyboard-Extension bekommt auf diesem Gerät **kein
+Mikrofon-Signal** – `AVAudioRecorder` nimmt stumm auf, `AVAudioEngine` scheitert mit
+`kAudioUnitErr_CannotDoInCurrentContext` (über mehrere AVAudioSession-Konfigurationen),
+obwohl Mikrofon-Berechtigung und Vollzugriff aktiv sind. Die Aufnahme läuft daher in der
+Container-App, wo das Mikrofon zuverlässig funktioniert (AVAudioEngine + AVAudioConverter
+→ 16 kHz/mono/Int16 WAV).
 
-## Shared state
+Einen vollautomatischen Rücksprung zu einer beliebigen Vor-App gibt es über öffentliche
+iOS-APIs nicht; der iOS-„‹ Zurück"-Chip (erscheint nach einem App-zu-App-Öffnen) ist der
+zuverlässige, universelle Weg und wird in der App durch einen animierten Hinweis betont.
 
-The app and keyboard share lightweight state through:
+## Modi
 
-```text
-group.app.blitztext.shared
+- **Wörtlich**: 1:1-Transkription.
+- **Verbessert**: zusätzlicher LLM-Schritt (`gpt-4o-mini`) korrigiert, verbessert und
+  kürzt den Text, ohne den Sinn zu ändern. Umschaltbar in Tastatur, App-Aufnahme-Screen
+  und als Standard in den Einstellungen.
+
+## Geteilter Zustand & Berechtigungen
+
+Der Transkript- und Modus-Austausch zwischen App und Tastatur läuft über den **geteilten
+Schlüsselbund** (`keychain-access-groups`), nicht über App Groups (für lokale Entwicklung
+mit Personal Team nicht verfügbar). Die Tastatur liest bewusst **nicht** die
+Zwischenablage, da jeder Lesezugriff die iOS-„Einsetzen erlauben?"-Abfrage auslöst (inkl.
+Universal Clipboard vom Mac). Vollzugriff ist für Mikrofon (App) und Schlüsselbund nötig.
+
+Der OpenAI-API-Key wird von der App im Schlüsselbund gespeichert und mit der Tastatur
+geteilt.
+
+## Build & Installation
+
+Die iOS-Targets sind in `BlitztextMac/project.yml` (xcodegen) definiert. Auf ein
+angeschlossenes Gerät bauen/installieren:
+
+```
+cd BlitztextMac && xcodegen generate
+xcodebuild -project BlitztextMac.xcodeproj -scheme BlitztextiOS -configuration Debug \
+  -destination 'platform=iOS,id=<DEVICE_ID>' -derivedDataPath /tmp/blitztext-ios-dd \
+  -allowProvisioningUpdates DEVELOPMENT_TEAM=<TEAM_ID> build
+xcrun devicectl device install app --device <DEVICE_ID> \
+  /tmp/blitztext-ios-dd/Build/Products/Debug-iphoneos/Blitztext.app
 ```
 
-The OpenAI API key is stored in the iOS Keychain by the containing app. The keyboard currently does not need the key because it does not perform transcription itself.
-
-## Next steps
-
-- Add App Intents for Action Button, Back Tap, and Shortcuts.
-- Improve the return-to-keyboard UX after recording.
-- Add history and deletion controls.
-- Explore local WhisperKit on iOS in the containing app first, then evaluate memory limits for keyboard-adjacent workflows.
-
+Hinweis: derivedDataPath außerhalb eines synchronisierten Ordners (z. B. `/tmp`) wählen –
+Datei-Provider-Attribute lassen sonst die Code-Signatur scheitern.

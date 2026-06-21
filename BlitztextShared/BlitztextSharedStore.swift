@@ -5,9 +5,6 @@ enum BlitztextSharedStore {
 
     private enum Key {
         static let lastTranscript = "lastTranscript"
-        static let lastTranscriptID = "lastTranscriptID"
-        static let lastTranscriptDate = "lastTranscriptDate"
-        static let pendingAutoInsertID = "pendingAutoInsertID"
         static let customTerms = "customTerms"
         static let language = "language"
     }
@@ -18,19 +15,7 @@ enum BlitztextSharedStore {
 
     static var lastTranscript: String {
         get { defaults.string(forKey: Key.lastTranscript) ?? "" }
-        set {
-            defaults.set(newValue, forKey: Key.lastTranscript)
-            defaults.set(UUID().uuidString, forKey: Key.lastTranscriptID)
-            defaults.set(Date(), forKey: Key.lastTranscriptDate)
-        }
-    }
-
-    static var lastTranscriptID: String {
-        defaults.string(forKey: Key.lastTranscriptID) ?? ""
-    }
-
-    static var lastTranscriptDate: Date? {
-        defaults.object(forKey: Key.lastTranscriptDate) as? Date
+        set { defaults.set(newValue, forKey: Key.lastTranscript) }
     }
 
     static var customTerms: [String] {
@@ -43,19 +28,10 @@ enum BlitztextSharedStore {
         set { defaults.set(newValue.trimmingCharacters(in: .whitespacesAndNewlines), forKey: Key.language) }
     }
 
-    static func markLastTranscriptForAutoInsert() {
-        let id = lastTranscriptID
-        guard !id.isEmpty else { return }
-        defaults.set(id, forKey: Key.pendingAutoInsertID)
-    }
-
-    static func consumePendingAutoInsert() -> String? {
-        let pendingID = defaults.string(forKey: Key.pendingAutoInsertID) ?? ""
-        guard !pendingID.isEmpty, pendingID == lastTranscriptID else {
-            return nil
-        }
-        defaults.removeObject(forKey: Key.pendingAutoInsertID)
-        let text = lastTranscript.trimmingCharacters(in: .whitespacesAndNewlines)
-        return text.isEmpty ? nil : text
+    /// Diktat-Modus: false = wörtlich, true = per LLM verbessert/gekürzt.
+    /// Liegt im geteilten Schlüsselbund, damit Tastatur und App denselben Wert sehen.
+    static var improveEnabled: Bool {
+        get { BlitztextKeychain.load(.improveModeEnabled) == "1" }
+        set { try? BlitztextKeychain.save(newValue ? "1" : "0", for: .improveModeEnabled) }
     }
 }

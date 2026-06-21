@@ -20,6 +20,15 @@
 	<dict/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Blitztext nutzt das Mikrofon, um deine Sprache zu transkribieren.</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>whatsapp</string>
+		<string>mobilenotes</string>
+		<string>message</string>
+		<string>sms</string>
+		<string>sgnl</string>
+		<string>tg</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -33,4 +42,3 @@
 	</array>
 </dict>
 </plist>
-
