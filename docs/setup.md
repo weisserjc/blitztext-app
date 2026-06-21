@@ -20,8 +20,8 @@ brew install xcodegen
 ## Clone
 
 ```bash
-git clone https://github.com/weisserjc/blitztext-app.git
-cd blitztext-app
+git clone https://github.com/weisserjc/blitztext-ios.git
+cd blitztext-ios
 ```
 
 ## Configure Identifiers
