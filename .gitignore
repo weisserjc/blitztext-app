@@ -15,6 +15,10 @@ build/
 
 # Local app artifacts
 Blitztext.app
+Blitztext *.app/
+.swiftpm-cache/
+.swiftpm-packages/
+.xcode-home/
 dist/
 models/
 *.mlmodel

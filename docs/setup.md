@@ -20,7 +20,7 @@ brew install xcodegen
 ## 2. Clone And Build
 
 ```bash
-git clone https://github.com/cmagnussen/blitztext-app.git
+git clone https://github.com/weisserjc/blitztext-app.git
 cd blitztext-app
 ./build.sh --debug
 ```

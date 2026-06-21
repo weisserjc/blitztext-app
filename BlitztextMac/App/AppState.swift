@@ -14,6 +14,7 @@ enum PopoverPage: Equatable {
 final class AppState {
     private static let pasteRetryInitialAttempts = 22
     private static let concealedPasteboardType = NSPasteboard.PasteboardType("org.nspasteboard.ConcealedType")
+    private static let pasteboardMarkerType = NSPasteboard.PasteboardType("app.blitztext.pasteboard-marker")
 
     var activeWorkflow: (any Workflow)?
     var page: PopoverPage = .main
@@ -28,6 +29,7 @@ final class AppState {
     var localModelDownloadProgress: Double?
     var localModelDownloadStatusText: String?
     var localModelDownloadErrorText: String?
+    var lastOutputText: String?
     var onMenuBarStatusChange: ((MenuBarStatus) -> Void)?
     private var activeLaunchSource: WorkflowLaunchSource = .manual
     private var activePasteTarget: PasteTarget?
@@ -293,6 +295,10 @@ final class AppState {
         writeSensitiveTextToPasteboard(text)
     }
 
+    func clearLastOutput() {
+        lastOutputText = nil
+    }
+
     // MARK: - Auto-Paste
 
     /// Copies the text, restores focus when needed, then simulates Cmd+V.
@@ -319,11 +325,13 @@ final class AppState {
 
     private func writeSensitiveTextToPasteboard(_ text: String) {
         let pasteboard = NSPasteboard.general
+        let marker = UUID().uuidString
 
         pasteboard.clearContents()
-        pasteboard.declareTypes([.string, Self.concealedPasteboardType], owner: nil)
+        pasteboard.declareTypes([.string, Self.concealedPasteboardType, Self.pasteboardMarkerType], owner: nil)
         pasteboard.setString(text, forType: .string)
         pasteboard.setString("", forType: Self.concealedPasteboardType)
+        pasteboard.setString(marker, forType: Self.pasteboardMarkerType)
     }
 
     func prepareForPopoverPresentation() {
@@ -448,6 +456,7 @@ final class AppState {
     }
 
     private func handleWorkflowOutput(_ text: String) {
+        lastOutputText = text
         pasteAtCursor(text, target: activePasteTarget)
         if activeLaunchSource == .hotkeyBackground {
             page = .main

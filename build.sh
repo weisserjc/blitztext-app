@@ -87,6 +87,8 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$SCRIPT_DIR/BlitztextMac"
 PROJECT_FILE="$PROJECT_DIR/BlitztextMac.xcodeproj"
 DERIVED_DATA_PATH="$SCRIPT_DIR/.derivedData-blitztextmac-build"
+PACKAGE_CACHE_PATH="$SCRIPT_DIR/.swiftpm-cache"
+CLONED_PACKAGES_PATH="$SCRIPT_DIR/.swiftpm-packages"
 cd "$PROJECT_DIR"
 
 ensure_xcodebuild_available
@@ -112,8 +114,11 @@ xcodebuild \
     -destination 'platform=macOS' \
     -configuration "$BUILD_CONFIGURATION" \
     -derivedDataPath "$DERIVED_DATA_PATH" \
+    -packageCachePath "$PACKAGE_CACHE_PATH" \
+    -clonedSourcePackagesDirPath "$CLONED_PACKAGES_PATH" \
     ONLY_ACTIVE_ARCH=NO \
     ARCHS="$UNIVERSAL_ARCHS" \
+    CODE_SIGNING_ALLOWED=NO \
     clean build
 
 # App finden
@@ -124,6 +129,7 @@ if [ ! -d "$APP_PATH" ]; then
     exit 1
 fi
 
+xattr -cr "$APP_PATH" 2>/dev/null || true
 verify_universal_app "$APP_PATH"
 
 # Resources manuell ins Bundle kopieren (xcodegen kopiert sie nicht automatisch)
@@ -138,8 +144,9 @@ cp -f "$PROJECT_DIR/Resources/menubar_icon@2x.png" "$RESOURCES_DIR/" 2>/dev/null
 DEST="$SCRIPT_DIR/Blitztext.app"
 rm -rf "$DEST"
 cp -R "$APP_PATH" "$DEST"
+xattr -cr "$DEST" 2>/dev/null || true
 echo "🔏 Signiere lokale Development-App ad-hoc. Dieses Artefakt ist nicht notarisiert."
-codesign --force --sign - "$DEST" 2>&1
+codesign --force --sign - --options runtime --entitlements "$PROJECT_DIR/Resources/BlitztextMac.entitlements" "$DEST" 2>&1
 verify_universal_app "$DEST"
 
 RUN_TARGET="$DEST"
@@ -154,8 +161,9 @@ if [ "$INSTALL_APP" = true ]; then
     fi
     rm -rf "$INSTALL_DEST"
     cp -R "$DEST" "$INSTALL_DEST"
+    xattr -cr "$INSTALL_DEST" 2>/dev/null || true
     echo "🔏 Signiere lokale Development-App ad-hoc. Dieses Artefakt ist nicht notarisiert."
-    codesign --force --sign - "$INSTALL_DEST" 2>&1
+    codesign --force --sign - --options runtime --entitlements "$PROJECT_DIR/Resources/BlitztextMac.entitlements" "$INSTALL_DEST" 2>&1
     verify_universal_app "$INSTALL_DEST"
     RUN_TARGET="$INSTALL_DEST"
 fi

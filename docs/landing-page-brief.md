@@ -2,13 +2,13 @@
 
 Domain: `blitztext.app`
 
-Goal: a very small landing page for an experimental open-source macOS preview.
+Goal: a very small landing page for an experimental open-source macOS and iOS preview.
 
 ## Hero
 
 Headline:
 
-> Blitztext macOS Preview
+> Blitztext Preview
 
 Subline:
 
@@ -16,7 +16,7 @@ Subline:
 
 Body:
 
-> An experimental open-source macOS menubar app. Not finished, not hosted, not plug-and-play. Built to learn from, fork, and improve.
+> An experimental open-source speech-to-text app for macOS and iOS. Not finished, not hosted, not plug-and-play. Built to learn from, fork, and improve.
 
 Primary CTA:
 
@@ -41,11 +41,12 @@ Small line:
 2. How it works
    - Build the app locally
    - Paste your own OpenAI API key
-   - Press a hotkey and speak
-   - Get text back on the clipboard
+   - On macOS: press a hotkey and speak
+   - On iOS: switch to the Blitztext keyboard and dictate
+   - Get text back where you were typing
 
 3. Open-source preview
-   - macOS-only
+   - macOS app plus experimental iOS keyboard/app
    - MIT License
    - experimental
    - no warranty
@@ -73,7 +74,7 @@ Small line:
 - free usage without API costs
 - no data leaves the device
 - guaranteed support
-- other platforms
+- App Store distribution
 - bundled local models
 - local rewriting
 

@@ -98,6 +98,12 @@ struct MenuBarView: View {
                     .padding(.bottom, 6)
             }
 
+            if let lastOutputText = appState.lastOutputText {
+                lastOutputPanel(text: lastOutputText)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 6)
+            }
+
             // Workflow list
             VStack(spacing: 0) {
                 ForEach(WorkflowType.mainMenuCases) { type in
@@ -116,6 +122,54 @@ struct MenuBarView: View {
 
             appFooter
         }
+    }
+
+    private func lastOutputPanel(text: String) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(spacing: 8) {
+                Image(systemName: "text.quote")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.green)
+
+                Text("Letzte Ausgabe")
+                    .font(.system(size: 11.5, weight: .semibold))
+                    .foregroundStyle(.primary)
+
+                Spacer()
+
+                Button {
+                    appState.copyToClipboard(text)
+                } label: {
+                    Image(systemName: "doc.on.doc")
+                        .font(.system(size: 11, weight: .medium))
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(SubtleButtonStyle())
+                .help("Kopieren")
+
+                Button {
+                    appState.clearLastOutput()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 10, weight: .medium))
+                        .frame(width: 22, height: 22)
+                }
+                .buttonStyle(SubtleButtonStyle())
+                .help("Ausblenden")
+            }
+
+            Text(text)
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .lineLimit(4)
+                .textSelection(.enabled)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(10)
+        .background(
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(nsColor: .controlBackgroundColor))
+        )
     }
 
     private var transcriptionModePanel: some View {
